@@ -42,4 +42,4 @@ jobs:
         SOURCE: build/*
         TARGET: ${{ secrets.DEPLOY_PATH }}
         SCRIPT_BEFORE: 'export pids=$(pgrep AzerothAPI) && if [ $pids ]; then while kill -2 $pids; do sleep 1; done fi;'
-        SCRIPT_AFTER: "tmux new -d 'cd /opt/api && chmod +x AzerothAPI && ./AzerothAPI >> api.log &'"
+        SCRIPT_AFTER: "tmux new -d 'cd /opt/api && chmod +x AzerothAPI && ./AzerothAPI >> api.log'"
