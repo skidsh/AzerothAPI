@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  deployment:
+
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Replace secret
+      uses: cschleiden/replace-tokens@v1
+      with:
+        tokenPrefix: '{'
+        tokenSuffix: '}'
+        files: 'AzerothAPI\appsettings.json'
+      env:
+        SECRET_API_KEY: ${{ secrets.API_KEY }}
+        SECRET_JWT: ${{ secrets.JWT }}
+        WORLD_CONNECTION: ${{ secrets.WORLD_CONNECTION }}
+        CHAR_CONNECTION: ${{ secrets.CHAR_CONNECTION }}
+        AUTH_CONNECTION: ${{ secrets.AUTH_CONNECTION }}
+        BLOG_CONNECTION: ${{ secrets.BLOG_CONNECTION }}
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Publish
+      run: dotnet publish -p:PublishProfile=FolderProfile -c Release --no-restore 
+    - name: ssh deploy
+      uses: easingthemes/ssh-deploy@v4.1.8
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+        REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
+        REMOTE_USER: ${{ secrets.DEPLOY_USER }}
+        SOURCE: AzerothAPI/bin/Release/net6.0/publish/*
+        TARGET: ${{ secrets.DEPLOY_PATH }}
+        SCRIPT_BEFORE: 'export pids=$(pgrep Azeroth.API) && if [ $pids ]; then while kill -2 $pids; do sleep 1; done fi;'
+        SCRIPT_AFTER: 'cd /opt/api && chmod +x AzerothAPI && ./AzerothAPI >> api.log &'
