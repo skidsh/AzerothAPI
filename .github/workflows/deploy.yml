@@ -41,5 +41,5 @@ jobs:
         REMOTE_USER: ${{ secrets.DEPLOY_USER }}
         SOURCE: build/*
         TARGET: ${{ secrets.DEPLOY_PATH }}
-        SCRIPT_BEFORE: 'export pids=$(pgrep Azeroth.API) && if [ $pids ]; then while kill -2 $pids; do sleep 1; done fi;'
-        SCRIPT_AFTER: 'cd /opt/api && chmod +x AzerothAPI && ./AzerothAPI >> api.log &'
+        SCRIPT_BEFORE: 'export pids=$(pgrep AzerothAPI) && if [ $pids ]; then while kill -2 $pids; do sleep 1; done fi;'
+        SCRIPT_AFTER: "tmux new -d 'cd /opt/api && chmod +x AzerothAPI && ./AzerothAPI >> api.log &'"
