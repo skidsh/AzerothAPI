@@ -30,16 +30,16 @@ jobs:
         AUTH_CONNECTION: ${{ secrets.AUTH_CONNECTION }}
         BLOG_CONNECTION: ${{ secrets.BLOG_CONNECTION }}
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore -r linux-x64
     - name: Publish
-      run: dotnet publish -c Release --no-restore -r linux-x64 --self-contained true
+      run: dotnet publish -c Release --no-restore -r linux-x64 --self-contained true -o "build"
     - name: ssh deploy
       uses: easingthemes/ssh-deploy@v4.1.8
       with:
         SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
         REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
         REMOTE_USER: ${{ secrets.DEPLOY_USER }}
-        SOURCE: AzerothAPI/bin/Release/net6.0/publish/*
+        SOURCE: build/*
         TARGET: ${{ secrets.DEPLOY_PATH }}
         SCRIPT_BEFORE: 'export pids=$(pgrep Azeroth.API) && if [ $pids ]; then while kill -2 $pids; do sleep 1; done fi;'
         SCRIPT_AFTER: 'cd /opt/api && chmod +x AzerothAPI && ./AzerothAPI >> api.log &'
