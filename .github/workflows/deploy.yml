@@ -21,7 +21,7 @@ jobs:
       with:
         tokenPrefix: '{'
         tokenSuffix: '}'
-        files: 'AzerothAPI\appsettings.json'
+        files: 'AzerothAPI/appsettings.json'
       env:
         SECRET_API_KEY: ${{ secrets.API_KEY }}
         SECRET_JWT: ${{ secrets.JWT }}
@@ -32,7 +32,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Publish
-      run: dotnet publish -p:PublishProfile=FolderProfile -c Release --no-restore 
+      run: dotnet publish -c Release --no-restore -r linux-x64 --self-contained true
     - name: ssh deploy
       uses: easingthemes/ssh-deploy@v4.1.8
       with:
