@@ -92,7 +92,7 @@ jobs:
               await github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: 'refs/heads/' + 'dependabot-prs',
+                ref: 'refs/heads/' + 'combined-prs',
                 sha: baseBranchSHA
               });
             } catch (error) {
@@ -108,7 +108,7 @@ jobs:
                 await github.rest.repos.merge({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  base: 'dependabot-prs',
+                  base: 'combined-prs',
                   head: branch,
                 });
                 console.log('Merged branch ' + branch);
@@ -130,7 +130,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: 'Combined PR',
-              head: 'dependabot-prs',
+              head: 'combined-prs',
               base: baseBranch,
               body: body
             });
