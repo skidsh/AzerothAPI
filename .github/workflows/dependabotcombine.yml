@@ -1,4 +1,4 @@
-name: DependabotCombine
+name: dependabotcombine
 
 on:
   workflow_dispatch:
@@ -21,4 +21,4 @@ jobs:
         # The repository.
         repo: "AzerothAPI"
         # The owner organization or user.
-        owner: "Jax"
+        owner: "skidsh"
